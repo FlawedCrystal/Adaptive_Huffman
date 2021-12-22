@@ -1,7 +1,7 @@
 import time
-import bitstring
+import bitstring as bitstring
 
-from huffman_tree import AdaptiveHuffmanTree
+from adaptive_huff_tree import AdaptiveHuffmanTree
 
 
 class Coder:
@@ -40,6 +40,8 @@ class Decoder:
                 end += 8
             else:
                 end = self.text.find('1', current_index) + 1
+                if end == 0:
+                    break
                 symbol = self.tree.search_by_path(self.text[current_index:end])
                 if symbol == -1:
                     raise Exception('Ошибка, не существует такого кода')
@@ -51,22 +53,16 @@ class Decoder:
 
 if __name__ == '__main__':
     time_to_start = time.time()
-
-
-    with open('picture.jpg', 'rb') as file:
+    with open('text.txt', 'rb') as file:
         words = ''.join([chr(i) for i in file.read()])
     # words = ''
-    text3 = ''.join([bin(ord(symbol))[2:].zfill(8) for symbol in words])
     c = Coder(words)
     res = c.squeeze()
     print(len(words) * 8, len(res), len(words) * 8 / len(res))
     d = Decoder(res)
     text2 = d.unclench()
     text = ''.join([bin(ord(symbol))[2:].zfill(8) for symbol in text2])
-    print(text, '-' * 100)
     time_to_end = time.time()
     print(f'Функция работала {time_to_end - time_to_start} секунд')
-    with open('pictureres.jpg', 'wb') as f:
+    with open('text1.txt', 'wb') as f:
         bitstring.Bits(bin=text).tofile(f)
-
-
